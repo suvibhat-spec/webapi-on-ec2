@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DemoCRUD.API/DemoCRUD.API.csproj" />
+  </Folder>
+</Solution>
