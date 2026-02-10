@@ -1,3 +1,4 @@
+using DemoCRUD.API;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -6,6 +7,20 @@ var assemblyName = typeof(Program).Assembly.GetName().Name;
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddCors(policy=>
+    policy.AddPolicy("CorsPolicy",opt=>
+    {
+        opt.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+    })
+);
+
+builder.Services.AddControllers(options=>
+{
+    options.Filters.Add<CustomAuthFilter>();
+});
+
+builder.Services.AddScoped<CustomAuthFilter>();//demo unautorized filter
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString,
@@ -28,6 +43,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
 
 var summaries = new[]
 {
@@ -55,6 +71,15 @@ app.MapPost("/User", (User user, ApplicationDbContext db) =>
     return Results.Created($"/User/{user.Id}", user);
 });
 
+app.MapGet("/all", async(ApplicationDbContext db) =>
+{
+    var users = await db.Users.ToListAsync();
+    return Results.Ok(users);
+    
+});
+
+
+app.MapControllers();
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

@@ -7,7 +7,7 @@
     <ContainerImageName>demo-crud-api</ContainerImageName>
     <ContainerImageTags>latest</ContainerImageTags>
     <PublishProfile>DefaultContainer</PublishProfile>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier> 
   </PropertyGroup>
 
   <ItemGroup>

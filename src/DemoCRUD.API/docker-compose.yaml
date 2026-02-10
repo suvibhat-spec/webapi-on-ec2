@@ -1,0 +1,33 @@
+version: '3.8'
+name: demo-crud
+services:
+    api:
+        container_name: demo-api
+        image: demo-crud-api:latest
+        environment:
+            - ASPNETCORE_ENVIRONMENT=docker
+            - ASPNETCORE_URLS=http://+:80
+            - ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=demoDb;Username=postgres;Password=admin;Include Error Detail=true
+        ports:
+          - 80:80
+        depends_on:
+            postgres-db:
+                condition: service_healthy
+    
+    postgres-db:
+        container_name: postgres-demo
+        image: postgres:16-alpine
+        environment:
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=admin
+        ports:
+          - 5432:5432
+        volumes:
+          - postgres-data:/var/lib/postgresql/data
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U postgres"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+volumes:
+  postgres-data:
